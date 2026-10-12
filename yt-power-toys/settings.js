@@ -8,14 +8,21 @@ const DEFAULTS = {
   rewindSpeed: 3,
   forwardEnabled: true,
   forwardSpeed: 2,
+  keyScanEnabled: true,
 
   previewEnabled: true,
   previewDelayMs: 500,
+  previewScrubEnabled: true,
 
   volumeGuardEnabled: true,
   volumeLimitPercent: 50,
+  volumeLowerInstead: false,
   volumeAutoResume: true,
   volumeBadgeEnabled: true,
+  quietHoursEnabled: true,
+  quietStart: '23:00',
+  quietEnd: '07:00',
+  quietLimitPercent: 25,
 };
 
 // Returns a settings object kept in sync with storage. `onChange` runs after the

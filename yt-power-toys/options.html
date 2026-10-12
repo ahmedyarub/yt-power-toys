@@ -10,7 +10,7 @@
     fieldset { border: 1px solid rgba(128, 128, 128, 0.4); border-radius: 8px; margin: 16px 0; padding: 4px 16px 8px; }
     legend { font-weight: 600; padding: 0 6px; }
     label { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 10px 0; }
-    input[type=number] { width: 80px; }
+    input[type=number], input[type=time] { width: 80px; }
     .hint { opacity: 0.75; margin: 8px 0; }
     #status { padding: 8px 10px; border-radius: 6px; background: rgba(128, 128, 128, 0.15); }
     #status.blocked { background: rgba(217, 48, 37, 0.2); }
@@ -21,28 +21,36 @@
   <h1>YT Power Toys</h1>
 
   <fieldset>
-    <legend>Long press on the player</legend>
-    <p class="hint">Hold the left part of the player to rewind, the rest to fast-forward. Scroll the mouse wheel while holding to change the speed; the new speed is saved.</p>
+    <legend>Rewind and fast-forward</legend>
+    <p class="hint">Hold the left part of the player to rewind, the rest to fast-forward. Or hold J / &larr; to rewind and L / &rarr; to fast-forward; a tap still jumps as usual. Scroll the mouse wheel while holding to change the speed; the new speed is saved.</p>
     <label>Hold time before it starts (ms) <input type="number" id="holdMs" min="100" max="2000" step="50"></label>
-    <label>Rewind <input type="checkbox" id="rewindEnabled"></label>
+    <label>Long-press rewind <input type="checkbox" id="rewindEnabled"></label>
     <label>Rewind zone (left % of the player) <input type="number" id="rewindZonePercent" min="5" max="100" step="1"></label>
     <label>Rewind speed (x) <input type="number" id="rewindSpeed" min="1" max="20" step="0.25"></label>
-    <label>Fast-forward <input type="checkbox" id="forwardEnabled"></label>
+    <label>Long-press fast-forward <input type="checkbox" id="forwardEnabled"></label>
     <label>Fast-forward speed (x) <input type="number" id="forwardSpeed" min="0.25" max="16" step="0.25"></label>
+    <label>Hold J / L / arrow keys to scan <input type="checkbox" id="keyScanEnabled"></label>
   </fieldset>
 
   <fieldset>
     <legend>Hover previews while PiP is playing</legend>
+    <p class="hint">Press M while a preview shows to toggle its sound.</p>
     <label>Enabled <input type="checkbox" id="previewEnabled"></label>
     <label>Hover delay (ms) <input type="number" id="previewDelayMs" min="0" max="3000" step="50"></label>
+    <label>Move the mouse across the preview to scrub <input type="checkbox" id="previewScrubEnabled"></label>
   </fieldset>
 
   <fieldset>
     <legend>Windows volume guard</legend>
     <label>Enabled <input type="checkbox" id="volumeGuardEnabled"></label>
-    <label>Block YouTube when the Windows volume is above (%) <input type="number" id="volumeLimitPercent" min="0" max="100" step="1"></label>
-    <label>Resume playback when the volume goes back down <input type="checkbox" id="volumeAutoResume"></label>
+    <label>Limit: act when the Windows volume is above (%) <input type="number" id="volumeLimitPercent" min="0" max="100" step="1"></label>
+    <label>Turn YouTube down instead of pausing it <input type="checkbox" id="volumeLowerInstead"></label>
+    <label>Resume paused playback when the volume goes back down <input type="checkbox" id="volumeAutoResume"></label>
     <label>Show the volume on the toolbar icon <input type="checkbox" id="volumeBadgeEnabled"></label>
+    <label>Quiet hours: a different limit at night <input type="checkbox" id="quietHoursEnabled"></label>
+    <label>Quiet hours from <input type="time" id="quietStart" required></label>
+    <label>Quiet hours until <input type="time" id="quietEnd" required></label>
+    <label>Quiet hours limit (%) <input type="number" id="quietLimitPercent" min="0" max="100" step="1"></label>
     <p id="status">Connecting…</p>
   </fieldset>
 

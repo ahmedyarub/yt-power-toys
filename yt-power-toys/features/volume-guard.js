@@ -1,29 +1,52 @@
 'use strict';
 
-// Pauses audible YouTube media while the background script says the Windows volume is
-// above the limit. Muted media (e.g. hover previews) is left alone: it makes no sound.
+// Applies the background script's volume guard decision to audible YouTube media while the
+// Windows volume is above the limit. Muted media (e.g. hover previews) is left alone.
+//  - mode 'pause': pause it, and resume it afterwards if autoResume is on.
+//  - mode 'lower': scale its volume down to volumeTarget, and restore it afterwards.
 (() => {
-  let state = { blocked: false };
+  let state = { blocked: false, mode: 'pause' };
   const pausedByUs = new Set();
+  const lowered = new Map();       // media -> the volume to restore
+  const ourVolume = new WeakMap(); // media -> the volume we last set, to tell our changes apart
   let banner = null;
 
+  const pausing = () => state.blocked && state.mode === 'pause';
+  const lowering = () => state.blocked && state.mode === 'lower';
+
+  function setVolume(media, volume) {
+    if (media.volume === volume) return;
+    ourVolume.set(media, volume);
+    media.volume = volume;
+  }
+
   function enforce(media) {
-    if (!state.blocked || media.paused || media.muted || media.volume === 0) return;
-    media.pause();
-    pausedByUs.add(media);
-    render();
+    if (media.muted || media.volume === 0) return;
+    if (pausing() && !media.paused) {
+      media.pause();
+      pausedByUs.add(media);
+      render();
+    } else if (lowering()) {
+      if (!lowered.has(media)) lowered.set(media, media.volume);
+      setVolume(media, Math.min(lowered.get(media), state.volumeTarget));
+    }
   }
 
   // Media events don't bubble, but capture listeners on the document still see them.
   document.addEventListener('play', (e) => enforce(e.target), true);
-  document.addEventListener('volumechange', (e) => enforce(e.target), true);
+  document.addEventListener('volumechange', (e) => {
+    const media = e.target;
+    // A change we didn't make (the user's slider, or YouTube loading the next video) is the
+    // volume to come back to.
+    if (lowered.has(media) && ourVolume.get(media) !== media.volume) lowered.set(media, media.volume);
+    enforce(media);
+  }, true);
 
   browser.runtime.connect().onMessage.addListener((next) => {
-    const wasBlocked = state.blocked;
+    const wasPausing = pausing();
+    const wasLowering = lowering();
     state = next;
-    if (state.blocked) {
-      document.querySelectorAll('video, audio').forEach(enforce);
-    } else if (wasBlocked) {
+    if (wasPausing && !pausing()) {
       if (state.autoResume) {
         for (const media of pausedByUs) {
           if (media.isConnected) media.play().catch((err) => console.warn('[yt-power-toys] resume failed:', err));
@@ -31,11 +54,18 @@
       }
       pausedByUs.clear();
     }
+    if (wasLowering && !lowering()) {
+      for (const [media, volume] of lowered) {
+        if (media.isConnected) setVolume(media, volume);
+      }
+      lowered.clear();
+    }
+    document.querySelectorAll('video, audio').forEach(enforce);
     render();
   });
 
   function render() {
-    if (!state.blocked || pausedByUs.size === 0) {
+    if (!pausing() || pausedByUs.size === 0) {
       banner?.remove();
       banner = null;
       return;
@@ -58,7 +88,8 @@
       });
       (document.body || document.documentElement).append(banner);
     }
-    banner.textContent = `Paused: Windows volume is ${state.volumePercent}% (limit ${state.limitPercent}%). ` +
+    banner.textContent = `Paused: Windows volume is ${state.volumePercent}% ` +
+      `(${state.quiet ? 'quiet hours ' : ''}limit ${state.limitPercent}%). ` +
       (state.autoResume ? 'Lower it and playback resumes.' : 'Lower it to play.');
   }
 })();

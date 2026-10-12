@@ -4,9 +4,9 @@ A single Firefox extension (Manifest V2, Firefox 142+) with three YouTube tools.
 
 | Tool | What it does |
 | --- | --- |
-| Long press | Press and hold on the **left third** of the player to rewind continuously (default 3x), or anywhere else on it to fast-forward (default 2x, up to 16x). This replaces YouTube's fixed hold-for-2x. **Scroll the wheel while holding** to change the speed in 0.25x steps; the new speed is saved. Short clicks still play/pause. |
-| Hover previews during PiP | While the main video is playing (in Picture-in-Picture or the miniplayer), YouTube stops showing hover previews on thumbnails. This shows a muted preview instead. The preview is a `youtube-nocookie.com` embed, so it never touches the PiP video. |
-| Windows volume guard | Pauses audible YouTube videos while the **Windows** output volume is above a limit (default 50%), and resumes them when the volume comes back down. The toolbar badge shows the current volume; you can turn that off in the options. |
+| Rewind and fast-forward | Press and hold on the **left third** of the player to rewind continuously (default 3x), or anywhere else on it to fast-forward (default 2x, up to 16x). This replaces YouTube's fixed hold-for-2x. Or **hold J / ← to rewind and L / → to fast-forward**: a tap is still YouTube's normal 5 s / 10 s jump. **Scroll the wheel while holding** to change the speed in 0.25x steps; the new speed is saved. Short clicks still play/pause. |
+| Hover previews during PiP | While the main video is playing (in Picture-in-Picture or the miniplayer), YouTube stops showing hover previews on thumbnails. This shows a muted preview instead. The preview is a `youtube-nocookie.com` embed, so it never touches the PiP video. **Press M** while it shows to toggle its sound (instead of muting the main video). **Move the mouse across it** to scrub; a red bar shows the position. |
+| Windows volume guard | Pauses audible YouTube videos while the **Windows** output volume is above a limit (default 50%), and resumes them when the volume comes back down. Optionally (off by default) it **turns YouTube down** instead, so that Windows volume × YouTube volume stays at the limit, and restores it afterwards. **Quiet hours** (on by default, 23:00–07:00) apply a lower limit (25%) at night. The toolbar badge shows the current volume (orange while turned down, red while blocked); you can turn the number off in the options. |
 
 ## Layout
 
