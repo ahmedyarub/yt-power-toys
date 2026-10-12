@@ -2,10 +2,12 @@
 
 // Shared by the background page, the options page and every content script.
 const DEFAULTS = {
+  holdMs: 350,
   rewindEnabled: true,
   rewindZonePercent: 33,
-  rewindHoldMs: 350,
   rewindSpeed: 3,
+  forwardEnabled: true,
+  forwardSpeed: 2,
 
   previewEnabled: true,
   previewDelayMs: 500,

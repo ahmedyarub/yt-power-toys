@@ -4,7 +4,7 @@ A single Firefox extension (Manifest V2, Firefox 142+) with three YouTube tools.
 
 | Tool | What it does |
 | --- | --- |
-| Long-press rewind | Press and hold on the **left third** of the player to rewind continuously (default 3x). Short clicks still play/pause, and YouTube's own hold-for-2x still works on the rest of the player. |
+| Long press | Press and hold on the **left third** of the player to rewind continuously (default 3x), or anywhere else on it to fast-forward (default 2x, up to 16x). This replaces YouTube's fixed hold-for-2x. **Scroll the wheel while holding** to change the speed in 0.25x steps; the new speed is saved. Short clicks still play/pause. |
 | Hover previews during PiP | While the main video is playing (in Picture-in-Picture or the miniplayer), YouTube stops showing hover previews on thumbnails. This shows a muted preview instead. The preview is a `youtube-nocookie.com` embed, so it never touches the PiP video. |
 | Windows volume guard | Pauses audible YouTube videos while the **Windows** output volume is above a limit (default 50%), and resumes them when the volume comes back down. The toolbar badge shows the current volume. |
 

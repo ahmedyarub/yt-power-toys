@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "YT Power Toys",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Long-press rewind, hover previews while Picture-in-Picture is playing, and a Windows volume guard for YouTube.",
   "browser_specific_settings": {
     "gecko": {
@@ -23,7 +23,7 @@
       ],
       "js": [
         "settings.js",
-        "features/long-press-rewind.js",
+        "features/long-press.js",
         "features/hover-preview.js",
         "features/volume-guard.js"
       ],
