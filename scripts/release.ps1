@@ -24,7 +24,8 @@ $env:npm_config_cache = Join-Path $root '.npm-cache'
 $version = (Get-Content (Join-Path $source 'manifest.json') -Raw | ConvertFrom-Json).version
 Write-Host "Releasing yt-power-toys $version"
 
-& (Join-Path $root 'native-host\install.ps1')
+# The native host is registered once, by hand, with native-host\install.ps1: run from inside
+# the Claude desktop app (an MSIX package) its registry write is virtualized and Firefox never sees it.
 
 npx --yes $webExt lint --source-dir $source --warnings-as-errors
 if ($LASTEXITCODE -ne 0) { throw 'web-ext lint failed' }

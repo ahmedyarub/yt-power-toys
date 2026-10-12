@@ -18,10 +18,11 @@ A single Firefox extension (Manifest V2, Firefox 142+) with three YouTube tools.
 
 Release Firefox only installs add-ons that Mozilla has signed. `scripts/release.ps1` does the whole flow:
 
-1. Registers the native host for Firefox under `HKCU` (current user only, no admin). It compiles the helper with the .NET Framework `csc.exe` that ships with Windows.
-2. Lints the extension with `web-ext`.
-3. Gets Mozilla to sign it as an **unlisted** add-on: private, and never shown on addons.mozilla.org.
-4. Opens the signed `.xpi` in Firefox, which installs it.
+1. Lints the extension with `web-ext`.
+2. Gets Mozilla to sign it as an **unlisted** add-on: private, and never shown on addons.mozilla.org.
+3. Opens the signed `.xpi` in Firefox, which asks you to confirm the install.
+
+**One-time native host setup.** Run `native-host\install.ps1` from your own terminal, **not from inside the Claude desktop app**. It compiles the helper with the .NET Framework `csc.exe` that ships with Windows, then registers it for Firefox under `HKCU` (current user only, no admin). Claude runs as an MSIX package, so registry writes from processes it starts go to a private copy of the registry that Firefox never sees.
 
 It needs AMO API credentials in the user environment as `WEB_EXT_API_KEY` and `WEB_EXT_API_SECRET`. Create them at https://addons.mozilla.org/developers/addon/api/key/.
 **Bump `version` in `yt-power-toys/manifest.json` before every release**: AMO never signs the same version twice.
