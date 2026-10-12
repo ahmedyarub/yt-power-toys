@@ -1,0 +1,25 @@
+'use strict';
+
+// Every input's id is a settings key; checkboxes hold booleans, the rest numbers.
+browser.storage.local.get(DEFAULTS).then((stored) => {
+  for (const [key, value] of Object.entries(stored)) {
+    const input = document.getElementById(key);
+    if (input.type === 'checkbox') input.checked = value;
+    else input.value = value;
+    input.addEventListener('change', () => {
+      if (!input.checkValidity()) return;
+      browser.storage.local.set({ [key]: input.type === 'checkbox' ? input.checked : Number(input.value) });
+    });
+  }
+});
+
+// The background script pushes the volume guard state, and every change after that.
+const status = document.getElementById('status');
+browser.runtime.connect().onMessage.addListener((s) => {
+  status.className = !s.enabled ? '' : s.error ? 'error' : s.blocked ? 'blocked' : '';
+  status.textContent = !s.enabled
+    ? 'Volume guard is off.'
+    : s.error
+      ? `${s.error}. Run native-host\\install.ps1, then reload the extension.`
+      : `Windows volume: ${s.muted ? 'muted' : `${s.volumePercent}%`}. YouTube is ${s.blocked ? 'BLOCKED' : 'allowed'}.`;
+});

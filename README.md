@@ -1,46 +1,38 @@
-# YouTube Firefox extensions
+# YT Power Toys
 
-Three independent Firefox extensions (Manifest V2, Firefox 115+).
+A single Firefox extension (Manifest V2, Firefox 142+) with three YouTube tools. Each one can be turned on or off on the options page (click the toolbar button).
 
-| Folder | What it does |
+| Tool | What it does |
 | --- | --- |
-| `yt-long-press-rewind` | Press and hold on the **left third** of the player to rewind continuously (default 3x). Short clicks still play/pause, and YouTube's own hold-for-2x still works on the rest of the player. The zone width, hold time and speed are in the add-on's options. |
-| `yt-pip-preview` | While the main video is playing (in Picture-in-Picture or the miniplayer), YouTube stops showing hover previews on thumbnails. This shows a muted preview after 500 ms of hovering. The preview is a `youtube-nocookie.com` embed, so it never touches the PiP video. |
-| `yt-volume-guard` | Pauses audible YouTube videos while the **Windows** output volume is above a limit (default 50%), and resumes them when the volume comes back down. Set the limit in the options, or click the toolbar button. The badge shows the current volume. |
+| Long-press rewind | Press and hold on the **left third** of the player to rewind continuously (default 3x). Short clicks still play/pause, and YouTube's own hold-for-2x still works on the rest of the player. |
+| Hover previews during PiP | While the main video is playing (in Picture-in-Picture or the miniplayer), YouTube stops showing hover previews on thumbnails. This shows a muted preview instead. The preview is a `youtube-nocookie.com` embed, so it never touches the PiP video. |
+| Windows volume guard | Pauses audible YouTube videos while the **Windows** output volume is above a limit (default 50%), and resumes them when the volume comes back down. The toolbar badge shows the current volume. |
 
-## Install
+## Layout
 
-### Try them out (removed when Firefox restarts)
+- `yt-power-toys/`: the extension. `settings.js` holds the shared defaults, and each tool lives in `features/`.
+- `native-host/`: a small Windows helper that reports the system volume to the volume guard. Firefox extensions cannot read it on their own.
+- `scripts/release.ps1`: signs the extension and installs it.
 
-`about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → pick the `manifest.json` in each folder
-(for the volume guard: `yt-volume-guard/extension/manifest.json`).
+## Release and install
 
-### Install permanently
+Release Firefox only installs add-ons that Mozilla has signed. `scripts/release.ps1` does the whole flow:
 
-Release Firefox only installs signed add-ons. Choose one of these:
+1. Registers the native host for Firefox under `HKCU` (current user only, no admin). It compiles the helper with the .NET Framework `csc.exe` that ships with Windows.
+2. Lints the extension with `web-ext`.
+3. Gets Mozilla to sign it as an **unlisted** add-on: private, and never shown on addons.mozilla.org.
+4. Opens the signed `.xpi` in Firefox, which installs it.
 
-- **Sign them yourself (unlisted, free).** Get API keys from https://addons.mozilla.org/developers/addon/api/key/, then for each folder run:
-  ```bash
-  npx web-ext sign --channel=unlisted --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET
-  ```
-  Then install the `.xpi` it produces.
-- **Use Firefox Developer Edition, Nightly or ESR.** Set `xpinstall.signatures.required = false` in `about:config`, zip the folder's contents into an `.xpi`, and install it from `about:addons`.
-
-### Volume guard native host (required, one time)
-
-Firefox extensions cannot read the Windows volume. `yt-volume-guard/native-host` contains a small helper that reports it.
-`install.ps1` compiles that helper with the .NET Framework `csc.exe` that ships with Windows. It then registers the helper for Firefox under `HKCU` (current user, no admin):
+It needs AMO API credentials in the user environment as `WEB_EXT_API_KEY` and `WEB_EXT_API_SECRET`. Create them at https://addons.mozilla.org/developers/addon/api/key/.
+**Bump `version` in `yt-power-toys/manifest.json` before every release**: AMO never signs the same version twice.
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File yt-volume-guard\native-host\install.ps1
+powershell -ExecutionPolicy Bypass -File scripts\release.ps1
 ```
-
-Then reload the extension. If the toolbar badge shows `!`, the helper is not connected; open the options page to see the error.
-To remove the helper, run `uninstall.ps1`.
 
 ## Notes
 
-- **Volume guard:** muted media is never blocked. This covers YouTube's mute button and hover previews. If the helper is missing, nothing is blocked, and the badge shows `!`.
+- **Volume guard:** muted media is never blocked. This covers YouTube's mute button and hover previews. If the native host is missing, nothing is blocked, the badge shows `!`, and the options page shows the error.
 - **Volume guard:** "Volume" means the Windows master volume of the default output device: the number on the Windows volume slider. Switching output devices is picked up within 250 ms.
-- **PiP preview:** a page cannot tell that Firefox's Picture-in-Picture is open. The preview therefore runs whenever the main YouTube video is playing and YouTube is not already showing its own preview over that thumbnail.
-- **PiP preview:** videos whose owners have turned off embedding show YouTube's "Video unavailable" card.
+- **Hover previews:** a page cannot tell that Firefox's Picture-in-Picture is open. The preview therefore runs whenever the main YouTube video is playing and YouTube is not already showing its own preview over that thumbnail.
+- **Hover previews:** videos whose owners have turned off embedding show YouTube's "Video unavailable" card.

@@ -1,34 +1,46 @@
 'use strict';
 
-// Owns the connection to the native host (which reports the Windows volume) and decides
-// whether YouTube playback is blocked. Content scripts and the options page receive the
-// decision over runtime ports; they never compute it themselves.
+// Volume guard: owns the connection to the native host (which reports the Windows
+// volume) and decides whether YouTube playback is blocked. Content scripts and the
+// options page receive the decision over runtime ports; they never compute it.
 
-const HOST = 'yt_volume_guard';
+const HOST = 'yt_power_toys';
 const RECONNECT_MS = 5000;
-const DEFAULTS = { limitPercent: 50, autoResume: true };
 
-let settings = { ...DEFAULTS };
 let host = { connected: false, volume: null, muted: false, error: 'Connecting to the native host…' };
 const ports = new Set();
+const settings = liveSettings(() => publish());
 
 function snapshot() {
   const volumePercent = host.volume == null ? null : Math.round(host.volume * 100);
-  const blocked = host.connected && volumePercent != null && !host.muted && volumePercent > settings.limitPercent;
-  return { ...host, volumePercent, blocked, ...settings };
+  const blocked = settings.volumeGuardEnabled && host.connected && volumePercent != null &&
+    !host.muted && volumePercent > settings.volumeLimitPercent;
+  return {
+    ...host,
+    volumePercent,
+    blocked,
+    enabled: settings.volumeGuardEnabled,
+    limitPercent: settings.volumeLimitPercent,
+    autoResume: settings.volumeAutoResume,
+  };
 }
 
 function publish() {
   const s = snapshot();
   for (const port of ports) port.postMessage(s);
 
+  if (!s.enabled) {
+    browser.browserAction.setBadgeText({ text: '' });
+    browser.browserAction.setTitle({ title: 'YT Power Toys' });
+    return;
+  }
   const healthy = s.connected && !s.error;
   browser.browserAction.setBadgeText({ text: !healthy ? '!' : s.muted ? 'M' : String(s.volumePercent) });
   browser.browserAction.setBadgeBackgroundColor({ color: !healthy ? '#80868b' : s.blocked ? '#d93025' : '#188038' });
   browser.browserAction.setTitle({
     title: !healthy
-      ? `YouTube Volume Guard: ${s.error}`
-      : `YouTube Volume Guard: volume ${s.muted ? 'muted' : `${s.volumePercent}%`}, limit ${s.limitPercent}%` +
+      ? `YT Power Toys: ${s.error}`
+      : `YT Power Toys: volume ${s.muted ? 'muted' : `${s.volumePercent}%`}, limit ${s.limitPercent}%` +
         (s.blocked ? ' (YouTube blocked)' : ''),
   });
 }
@@ -41,7 +53,7 @@ function connect() {
   });
   port.onDisconnect.addListener((p) => {
     const reason = p.error?.message || 'disconnected';
-    console.warn(`[volume-guard] native host ${HOST}: ${reason}; retrying in ${RECONNECT_MS} ms`);
+    console.warn(`[yt-power-toys] native host ${HOST}: ${reason}; retrying in ${RECONNECT_MS} ms`);
     host = { connected: false, volume: null, muted: false, error: `Native host not available: ${reason}` };
     publish();
     setTimeout(connect, RECONNECT_MS);
@@ -54,17 +66,6 @@ browser.runtime.onConnect.addListener((port) => {
   port.postMessage(snapshot());
 });
 
-browser.storage.onChanged.addListener((changes) => {
-  for (const [key, { newValue }] of Object.entries(changes)) {
-    if (key in DEFAULTS) settings[key] = newValue;
-  }
-  publish();
-});
-
 browser.browserAction.onClicked.addListener(() => browser.runtime.openOptionsPage());
 
-browser.storage.local.get(DEFAULTS).then((stored) => {
-  settings = stored;
-  publish();
-  connect();
-});
+connect();

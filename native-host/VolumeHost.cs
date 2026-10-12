@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
-// Firefox native messaging host for YouTube Volume Guard.
+// Firefox native messaging host for YT Power Toys.
 // Pushes the Windows default output device's master volume (0..1, as shown on the
 // Windows volume slider) and mute state to the extension whenever either changes.
 static class VolumeHost
