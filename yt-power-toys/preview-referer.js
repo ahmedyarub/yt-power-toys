@@ -5,6 +5,10 @@
 // comes back as PLAYABILITY_ERROR_CODE_EMBEDDER_IDENTITY_DENIED ("Error 152-4"), and with no
 // Referer as ..._MISSING_REFERRER (153). Present those frames as embedded from
 // youtube-nocookie.com, which YouTube accepts.
+//
+// Firefox only lets this listener modify the request when the extension has host permission
+// for the requesting page (youtube.com) as well as the request URL; content-script matches
+// don't count. Without "https://www.youtube.com/*" in permissions it silently does nothing.
 
 const PREVIEW_REFERER = 'https://www.youtube-nocookie.com/';
 
