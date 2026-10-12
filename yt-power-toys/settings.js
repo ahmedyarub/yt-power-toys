@@ -15,6 +15,7 @@ const DEFAULTS = {
   volumeGuardEnabled: true,
   volumeLimitPercent: 50,
   volumeAutoResume: true,
+  volumeBadgeEnabled: true,
 };
 
 // Returns a settings object kept in sync with storage. `onChange` runs after the

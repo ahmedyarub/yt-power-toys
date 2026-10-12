@@ -20,6 +20,6 @@ browser.runtime.connect().onMessage.addListener((s) => {
   status.textContent = !s.enabled
     ? 'Volume guard is off.'
     : s.error
-      ? `${s.error}. Run native-host\\install.ps1, then reload the extension.`
+      ? `${s.error}. Run native-host\\install.ps1 from a terminal outside the Claude app; the extension reconnects within 5 seconds.`
       : `Windows volume: ${s.muted ? 'muted' : `${s.volumePercent}%`}. YouTube is ${s.blocked ? 'BLOCKED' : 'allowed'}.`;
 });

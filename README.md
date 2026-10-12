@@ -6,7 +6,7 @@ A single Firefox extension (Manifest V2, Firefox 142+) with three YouTube tools.
 | --- | --- |
 | Long press | Press and hold on the **left third** of the player to rewind continuously (default 3x), or anywhere else on it to fast-forward (default 2x, up to 16x). This replaces YouTube's fixed hold-for-2x. **Scroll the wheel while holding** to change the speed in 0.25x steps; the new speed is saved. Short clicks still play/pause. |
 | Hover previews during PiP | While the main video is playing (in Picture-in-Picture or the miniplayer), YouTube stops showing hover previews on thumbnails. This shows a muted preview instead. The preview is a `youtube-nocookie.com` embed, so it never touches the PiP video. |
-| Windows volume guard | Pauses audible YouTube videos while the **Windows** output volume is above a limit (default 50%), and resumes them when the volume comes back down. The toolbar badge shows the current volume. |
+| Windows volume guard | Pauses audible YouTube videos while the **Windows** output volume is above a limit (default 50%), and resumes them when the volume comes back down. The toolbar badge shows the current volume; you can turn that off in the options. |
 
 ## Layout
 
@@ -22,7 +22,7 @@ Release Firefox only installs add-ons that Mozilla has signed. `scripts/release.
 2. Gets Mozilla to sign it as an **unlisted** add-on: private, and never shown on addons.mozilla.org.
 3. Opens the signed `.xpi` in Firefox, which asks you to confirm the install.
 
-**One-time native host setup.** Run `native-host\install.ps1` from your own terminal, **not from inside the Claude desktop app**. It compiles the helper with the .NET Framework `csc.exe` that ships with Windows, then registers it for Firefox under `HKCU` (current user only, no admin). Claude runs as an MSIX package, so registry writes from processes it starts go to a private copy of the registry that Firefox never sees.
+**One-time native host setup.** Run `native-host\install.ps1` from your own terminal, **not from inside the Claude desktop app**. It compiles the helper with the .NET Framework `csc.exe` that ships with Windows, then registers it for Firefox under `HKCU` (current user only, no admin). Claude runs as an MSIX package, so registry writes from processes it starts go to a private copy of the registry that Firefox never sees. `native-host\uninstall.ps1` removes the registration, and also has to run outside Claude.
 
 It needs AMO API credentials in the user environment as `WEB_EXT_API_KEY` and `WEB_EXT_API_SECRET`. Create them at https://addons.mozilla.org/developers/addon/api/key/.
 **Bump `version` in `yt-power-toys/manifest.json` before every release**: AMO never signs the same version twice.

@@ -14,6 +14,12 @@ $artifacts = Join-Path $root 'web-ext-artifacts'
 $firefox = 'C:\Program Files\Mozilla Firefox\firefox.exe'
 $webExt = 'web-ext@10.7.0'
 
+# A shell started before the keys were saved doesn't have them; read the user environment.
+foreach ($name in 'WEB_EXT_API_KEY', 'WEB_EXT_API_SECRET') {
+    if (-not [Environment]::GetEnvironmentVariable($name)) {
+        [Environment]::SetEnvironmentVariable($name, [Environment]::GetEnvironmentVariable($name, 'User'))
+    }
+}
 if (-not $env:WEB_EXT_API_KEY -or -not $env:WEB_EXT_API_SECRET) {
     throw 'WEB_EXT_API_KEY / WEB_EXT_API_SECRET are not set. Create them at https://addons.mozilla.org/developers/addon/api/key/'
 }

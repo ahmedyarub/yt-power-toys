@@ -34,8 +34,10 @@ function publish() {
     browser.browserAction.setTitle({ title: 'YT Power Toys' });
     return;
   }
+  // The "!" warning shows even with the volume counter turned off.
   const healthy = s.connected && !s.error;
-  browser.browserAction.setBadgeText({ text: !healthy ? '!' : s.muted ? 'M' : String(s.volumePercent) });
+  const badge = !healthy ? '!' : !settings.volumeBadgeEnabled ? '' : s.muted ? 'M' : String(s.volumePercent);
+  browser.browserAction.setBadgeText({ text: badge });
   browser.browserAction.setBadgeBackgroundColor({ color: !healthy ? '#80868b' : s.blocked ? '#d93025' : '#188038' });
   browser.browserAction.setTitle({
     title: !healthy
