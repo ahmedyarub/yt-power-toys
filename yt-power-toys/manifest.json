@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "YT Power Toys",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Long-press rewind, hover previews while Picture-in-Picture is playing, and a Windows volume guard for YouTube.",
   "browser_specific_settings": {
     "gecko": {
@@ -10,8 +10,8 @@
       "data_collection_permissions": { "required": ["none"] }
     }
   },
-  "permissions": ["nativeMessaging", "storage"],
-  "background": { "scripts": ["settings.js", "background.js"], "persistent": true },
+  "permissions": ["nativeMessaging", "storage", "webRequest", "webRequestBlocking", "https://www.youtube-nocookie.com/*"],
+  "background": { "scripts": ["settings.js", "background.js", "preview-referer.js"], "persistent": true },
   "icons": { "48": "icons/icon.svg", "96": "icons/icon.svg" },
   "browser_action": { "default_title": "YT Power Toys", "default_icon": "icons/icon.svg" },
   "content_scripts": [

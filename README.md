@@ -37,3 +37,4 @@ powershell -ExecutionPolicy Bypass -File scripts\release.ps1
 - **Volume guard:** "Volume" means the Windows master volume of the default output device: the number on the Windows volume slider. Switching output devices is picked up within 250 ms.
 - **Hover previews:** a page cannot tell that Firefox's Picture-in-Picture is open. The preview therefore runs whenever the main YouTube video is playing and YouTube is not already showing its own preview over that thumbnail.
 - **Hover previews:** videos whose owners have turned off embedding show YouTube's "Video unavailable" card.
+- **Hover previews:** YouTube refuses embeds whose embedding page is youtube.com itself ("Error 152-4", `EMBEDDER_IDENTITY_DENIED`), and the previews are embedded in youtube.com pages. `preview-referer.js` therefore sends `Referer: https://www.youtube-nocookie.com/` for those preview frames only. This is why the extension needs the `webRequest` permission.
