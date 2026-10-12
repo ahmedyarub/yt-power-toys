@@ -1,0 +1,5 @@
+yt-volume-guard/native-host/VolumeHost.exe
+yt-volume-guard/native-host/yt_volume_guard.json
+*.xpi
+web-ext-artifacts/
+.amo-upload-uuid

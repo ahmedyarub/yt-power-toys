@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "YouTube Long-Press Rewind",
+  "version": "1.0.0",
+  "description": "Press and hold on the left part of a YouTube video to rewind continuously.",
+  "browser_specific_settings": {
+    "gecko": { "id": "yt-long-press-rewind@local", "strict_min_version": "115.0" }
+  },
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "options_ui": { "page": "options.html" }
+}

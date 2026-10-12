@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "YouTube Volume Guard",
+  "version": "1.0.0",
+  "description": "Pauses YouTube videos while the Windows volume is above a configurable limit.",
+  "browser_specific_settings": {
+    "gecko": { "id": "yt-volume-guard@local", "strict_min_version": "115.0" }
+  },
+  "permissions": ["nativeMessaging", "storage"],
+  "background": { "scripts": ["background.js"], "persistent": true },
+  "browser_action": { "default_title": "YouTube Volume Guard" },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://www.youtube-nocookie.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "options_ui": { "page": "options.html" }
+}
